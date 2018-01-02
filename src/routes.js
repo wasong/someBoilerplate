@@ -1,7 +1,3 @@
 import React from 'react'
 
-export default () => (
-  <div>
-    Some boilerplate, eh?
-  </div>
-)
+export default () => 'Some boilerplate, eh?'

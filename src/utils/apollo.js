@@ -19,11 +19,11 @@ const httpLink = createHttpLink({ uri: 'http://localhost:8000/graphql' })
 // })
 
 // errorLink
-// const errorLink = onError(({ networkError }) => {
-//   if (networkError.statusCode === 401) {
-//     // do something
-//   }
-// })
+const errorLink = onError(({ networkError }) => {
+  if (networkError.statusCode === 401) {
+    // do something
+  }
+})
 
 const cache = new InMemoryCache().restore(window.__APOLLO_STATE__) // eslint-disable-line
 
@@ -31,7 +31,7 @@ const cache = new InMemoryCache().restore(window.__APOLLO_STATE__) // eslint-dis
 export default new ApolloClient({
   link: ApolloLink.from([
     // authLink,
-    // errorLink,
+    errorLink,
     httpLink,
   ]),
   cache,
