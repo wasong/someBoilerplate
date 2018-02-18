@@ -6,7 +6,7 @@ import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 // import { RetryLink } from 'apollo-link-retry'
 
-const httpLink = createHttpLink({ uri: 'http://localhost:8000/graphql' })
+const httpLink = createHttpLink({ uri: 'https://api.graph.cool/simple/v1/cjbybhg8640ni01344uc8ut6e' })
 
 // authLink (use when required)
 // const authLink = new ApolloLink((operation, forward) => {
