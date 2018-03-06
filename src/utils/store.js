@@ -6,11 +6,13 @@ import rootReducer from './reducers'
 
 export function configureStore(initialState = {}) {
   // Middleware and store enhancers
-  const enhancers = [
-    applyMiddleware(thunk, logger),
-  ]
+  const middlewares = [
+    thunk,
+    process.env.NODE_ENV !== 'production' && logger,
+  ].filter(Boolean)
+  const enhancer = compose(applyMiddleware(...middlewares))
 
-  const store = createStore(rootReducer, initialState, compose(...enhancers))
+  const store = createStore(rootReducer, initialState, enhancer)
 
   // For hot reloading reducers
   if (module.hot) {

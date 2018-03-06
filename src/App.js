@@ -14,7 +14,7 @@ import Routes from './routes'
 import './styles/normalize.css'
 import './styles/app.css'
 
-const renderApp = () => (
+const renderApp = () => (r
   <ApolloProvider client={client}>
     <Provider store={configureStore()}>
       <div>

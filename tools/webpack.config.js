@@ -147,4 +147,8 @@ if (isDebug && useHMR) {
   config.plugins.push(new webpack.NoEmitOnErrorsPlugin())
 }
 
+// babel-polyfill has to come after react-hot-load/patch and webpack-hot-middleware/client
+config.entry.unshift('whatwg-fetch')
+config.entry.unshift('babel-polyfill')
+
 module.exports = config
