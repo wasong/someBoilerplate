@@ -3,19 +3,19 @@ const webpack = require('webpack')
 const AssetsPlugin = require('assets-webpack-plugin')
 const pkg = require('../package.json')
 
-const isDebug = global.DEBUG === false ? false : !process.argv.includes('--release')
+const isDebug = !process.argv.includes('--release')
 const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v')
-const useHMR = !!global.HMR
 const babelConfig = Object.assign({}, pkg.babel, {
   babelrc: false,
-  cacheDirectory: useHMR,
+  cacheDirectory: true,
   presets: pkg.babel.presets.map(x => x === 'latest' ? ['latest', { es2015: { modules: false } }] : x), // eslint-disable-line
 })
 
 // http://webpack.github.io/docs/configuration.html
 const config = {
-  context: path.resolve(__dirname, '../src'),
+  mode: isDebug ? 'development' : 'production',
 
+  context: path.resolve(__dirname, '../src'),
   entry: [
     './main.js',
   ],
@@ -25,7 +25,7 @@ const config = {
     path: path.resolve(__dirname, '../public/dist'),
     publicPath: isDebug ? `http://localhost:${process.env.PORT || 8080}/dist/` : '/dist/',
     filename: isDebug ? '[name].js?[hash]' : '[name].[hash].js',
-    chunkFilename: isDebug ? '[id].js?[chunkhash]' : '[id].[chunkhash].js',
+    chunkFilename: isDebug ? '[name].js?[chunkhash]' : '[name].[chunkhash].js',
     sourcePrefix: '  ',
   },
 
@@ -58,9 +58,9 @@ const config = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: isDebug ? '"development"' : '"production"',
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
+        __DEV__: isDebug,
       },
-      __DEV__: isDebug,
     }),
     // Emit a JSON file with assets paths
     // https://github.com/sporto/assets-webpack-plugin#options
@@ -81,8 +81,10 @@ const config = {
         test: /\.jsx?$/,
         include: path.resolve(__dirname, '../src'),
         loader: 'babel-loader',
+        exclude: '/node_modules/',
         options: babelConfig,
       },
+      // https://jaketrent.com/post/load-both-css-and-css-modules-webpack/
       {
         test: /\.global\.css$/,
         use: ['style-loader', 'css-loader'],
@@ -128,26 +130,6 @@ const config = {
   },
 }
 
-// Optimize the bundle in release (production) mode
-if (!isDebug) {
-  config.plugins.push(new webpack.optimize.UglifyJsPlugin({
-    sourceMap: true,
-    compress: {
-      warnings: isVerbose,
-    },
-  }))
-  config.plugins.push(new webpack.optimize.AggressiveMergingPlugin())
-}
-
-// Hot Module Replacement (HMR) + React Hot Reload
-if (isDebug && useHMR) {
-  babelConfig.plugins.unshift('react-hot-loader/babel')
-  config.entry.unshift('react-hot-loader/patch', 'webpack-hot-middleware/client')
-  config.plugins.push(new webpack.HotModuleReplacementPlugin())
-  config.plugins.push(new webpack.NoEmitOnErrorsPlugin())
-}
-
-// babel-polyfill has to come after react-hot-load/patch and webpack-hot-middleware/client
 config.entry.unshift('whatwg-fetch')
 config.entry.unshift('babel-polyfill')
 

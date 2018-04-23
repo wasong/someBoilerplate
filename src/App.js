@@ -14,7 +14,7 @@ import Routes from './routes'
 import './styles/normalize.css'
 import './styles/app.css'
 
-const renderApp = () => (r
+const App = () => (
   <ApolloProvider client={client}>
     <Provider store={configureStore()}>
       <div>
@@ -42,4 +42,4 @@ const renderApp = () => (r
   </ApolloProvider>
 )
 
-export default renderApp
+export default App

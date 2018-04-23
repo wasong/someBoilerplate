@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom'
 
 const Routes = () => (
   <div>
-    <div>BOILERPLATE ACTIVATE!</div>
+    <div>BOILERPLATE ACTIVATE 2!</div>
   </div>
 )
 

@@ -1,6 +1,5 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { AppContainer } from 'react-hot-loader'
 import FastClick from 'fastclick'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 
@@ -15,21 +14,4 @@ injectTapEventPlugin() // remove on official React version
 
 const mount = document.getElementById('root')
 
-render(
-  <AppContainer>
-    <App />
-  </AppContainer>,
-  mount,
-)
-
-// For hot reloading of react components
-if (module.hot) {
-  module.hot.accept('./App', () => {
-    render(
-      <AppContainer>
-        <App />
-      </AppContainer>,
-      mount,
-    )
-  })
-}
+render(<App />, mount)
