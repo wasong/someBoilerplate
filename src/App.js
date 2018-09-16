@@ -3,7 +3,6 @@ import Helmet from 'react-helmet'
 import { Provider } from 'react-redux'
 import { BrowserRouter as Router } from 'react-router-dom'
 import ApolloProvider from 'react-apollo/ApolloProvider'
-import { StyleRoot } from 'radium'
 
 import client from 'utils/apollo'
 import { configureStore } from 'utils/store'
@@ -12,7 +11,6 @@ import Routes from './routes'
 
 // Base stylesheets
 import './styles/normalize.css'
-import './styles/app.css'
 
 const App = () => (
   <ApolloProvider client={client}>
@@ -32,11 +30,9 @@ const App = () => (
             },
           ]}
         />
-        <StyleRoot>
-          <Router>
-            <Routes />
-          </Router>
-        </StyleRoot>
+        <Router>
+          <Routes />
+        </Router>
       </div>
     </Provider>
   </ApolloProvider>

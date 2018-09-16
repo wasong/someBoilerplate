@@ -80,19 +80,43 @@ const config = {
       {
         test: /\.jsx?$/,
         include: path.resolve(__dirname, '../src'),
-        loader: 'babel-loader',
         exclude: '/node_modules/',
-        options: babelConfig,
+        use: {
+          loader: 'babel-loader',
+          options: babelConfig,
+        },
       },
       // https://jaketrent.com/post/load-both-css-and-css-modules-webpack/
       {
         test: /\.global\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: isDebug,
+              importLoaders: true,
+              // CSS Modules https://github.com/css-modules/css-modules
+              modules: false,
+              localIdentName: isDebug ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:4]',
+              // CSS Nano http://cssnano.co/options/
+              minimize: !isDebug,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              config: {
+                path: './tools/postcss.config.js',
+              },
+            },
+          },
+        ],
       },
       {
         test: /^(?!.*?\.global).*\.css$/,
         use: [
-          { loader: 'style-loader' },
+          'style-loader',
           {
             loader: 'css-loader',
             options: {
@@ -117,20 +141,21 @@ const config = {
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|webp)$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+          },
         },
       },
       {
         test: /\.(eot|ttf|wav|mp3)$/,
-        loader: 'file-loader',
+        use: 'file-loader',
       },
     ],
   },
 }
 
 config.entry.unshift('whatwg-fetch')
-config.entry.unshift('babel-polyfill')
 
 module.exports = config
