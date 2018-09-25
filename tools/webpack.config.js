@@ -1,6 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const AssetsPlugin = require('assets-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const pkg = require('../package.json')
 
 const isDebug = !process.argv.includes('--release')
@@ -14,6 +15,11 @@ const babelConfig = Object.assign({}, pkg.babel, {
 // http://webpack.github.io/docs/configuration.html
 const config = {
   mode: isDebug ? 'development' : 'production',
+  optimization: {
+    minimizer: [new UglifyJsPlugin({
+      parallel: true,
+    })],
+  },
 
   context: path.resolve(__dirname, '../src'),
   entry: [
