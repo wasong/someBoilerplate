@@ -94,33 +94,7 @@ const config = {
       },
       // https://jaketrent.com/post/load-both-css-and-css-modules-webpack/
       {
-        test: /\.global\.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: isDebug,
-              importLoaders: true,
-              // CSS Modules https://github.com/css-modules/css-modules
-              modules: false,
-              localIdentName: isDebug ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:4]',
-              // CSS Nano http://cssnano.co/options/
-              minimize: !isDebug,
-            },
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              config: {
-                path: './tools/postcss.config.js',
-              },
-            },
-          },
-        ],
-      },
-      {
-        test: /^(?!.*?\.global).*\.css$/,
+        test: /\.css$/,
         use: [
           'style-loader',
           {
@@ -131,8 +105,6 @@ const config = {
               // CSS Modules https://github.com/css-modules/css-modules
               modules: true,
               localIdentName: isDebug ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:4]',
-              // CSS Nano http://cssnano.co/options/
-              minimize: !isDebug,
             },
           },
           {

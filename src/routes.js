@@ -4,17 +4,20 @@ import { styler } from 'utils/styler'
 
 const styles = styler({
   home: {
-    fontSize: 24,
+    fontSize: ['1rem', '1em', 20],
     transition: 'font-size 100ms',
     '&:hover': {
-      fontSize: 18,
+      fontSize: ['1rem', '1em', 18],
+    },
+    '@media (max-width: 768px)': {
+      color: 'red',
     },
   },
 })
 
 const Routes = () => (
   <div>
-    <div className={styles.home}>BOILERPLATE ACTIVATE 2!</div>
+    <div className={styles.home}>Emotion</div>
   </div>
 )
 

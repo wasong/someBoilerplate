@@ -2,10 +2,10 @@ import React from 'react'
 import Helmet from 'react-helmet'
 import { Provider } from 'react-redux'
 import { BrowserRouter as Router } from 'react-router-dom'
-import ApolloProvider from 'react-apollo/ApolloProvider'
+import { ApolloProvider } from 'react-apollo'
 
-import client from 'utils/apollo'
 import { configureStore } from 'utils/store'
+import client from 'utils/apollo'
 
 import Routes from './routes'
 

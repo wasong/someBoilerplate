@@ -4,9 +4,21 @@ import { ApolloLink } from 'apollo-link'
 import { createHttpLink } from 'apollo-link-http'
 import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-// import { RetryLink } from 'apollo-link-retry'
+import { RetryLink } from 'apollo-link-retry'
 
 const httpLink = createHttpLink({ uri: 'https://api.graph.cool/simple/v1/cjbybhg8640ni01344uc8ut6e' })
+
+const retryLink = new RetryLink({
+  delay: {
+    initial: 300,
+    max: Infinity,
+    jitter: true,
+  },
+  attempts: {
+    max: 5,
+    retryIf: (error, _operation) => !!error,
+  },
+})
 
 // authLink (use when required)
 // const authLink = new ApolloLink((operation, forward) => {
@@ -31,6 +43,7 @@ const cache = new InMemoryCache().restore(window.__APOLLO_STATE__) // eslint-dis
 export default new ApolloClient({
   link: ApolloLink.from([
     // authLink,
+    retryLink,
     errorLink,
     httpLink,
   ]),
