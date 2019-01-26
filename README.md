@@ -13,4 +13,5 @@ const styles = styler({
 
 <div className={styles.foo}>
 ```
+- currently Emotion v9: [Docs](https://5bb1495273f2cf57a2cf39cc--emotion.netlify.com/)
 

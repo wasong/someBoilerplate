@@ -1,5 +1,6 @@
 import React from 'react'
-import { Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { cx } from 'emotion'
 import { styler } from 'utils/styler'
 
 const styles = styler({
@@ -13,12 +14,22 @@ const styles = styler({
       color: 'red',
     },
   },
+  underline: {
+    fontWeight: 'bold',
+  },
 })
 
 const Routes = () => (
-  <div>
-    <div className={styles.home}>Emotion</div>
-  </div>
+  <Router>
+    <div
+      className={cx(
+        styles.home,
+        { [styles.underline]: true },
+      )}
+    >
+      Emotion
+    </div>
+  </Router>
 )
 
 export default Routes

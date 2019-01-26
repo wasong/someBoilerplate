@@ -1,7 +1,6 @@
 import React from 'react'
 import Helmet from 'react-helmet'
 import { Provider } from 'react-redux'
-import { BrowserRouter as Router } from 'react-router-dom'
 import { ApolloProvider } from 'react-apollo'
 
 import { configureStore } from 'utils/store'
@@ -30,9 +29,7 @@ const App = () => (
             },
           ]}
         />
-        <Router>
-          <Routes />
-        </Router>
+        <Routes />
       </div>
     </Provider>
   </ApolloProvider>

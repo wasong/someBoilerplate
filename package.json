@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node tools/run.js",
-    "build": "NODE_ENV=production node tools/build.js",
+    "build": "NODE_ENV=production node tools/build.js --release",
     "build:debug": "node tools/build.js --debug",
     "test:lint": "eslint src test tools postcss.config.js webpack.config.js",
     "test:unit": "jest",
