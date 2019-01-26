@@ -1,37 +1,25 @@
 const path = require('path')
 const webpack = require('webpack')
 const AssetsPlugin = require('assets-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const pkg = require('../package.json')
 
-const isDebug = !process.argv.includes('--release')
-const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v')
 const babelConfig = Object.assign({}, pkg.babel, {
   babelrc: false,
   cacheDirectory: true,
-  presets: pkg.babel.presets.map(x => x === 'latest' ? ['latest', { es2015: { modules: false } }] : x), // eslint-disable-line
 })
 
 // http://webpack.github.io/docs/configuration.html
 const config = {
-  mode: isDebug ? 'development' : 'production',
-  optimization: {
-    minimizer: [new UglifyJsPlugin({
-      parallel: true,
-    })],
-  },
-
   context: path.resolve(__dirname, '../src'),
   entry: [
-    './main.js',
+    '@babel/polyfill',
+    'whatwg-fetch',
   ],
 
   // Options affecting the output of the compilation
   output: {
     path: path.resolve(__dirname, '../public/dist'),
-    publicPath: isDebug ? `http://localhost:${process.env.PORT || 8080}/dist/` : '/dist/',
-    filename: isDebug ? '[name].js?[hash]' : '[name].[hash].js',
-    chunkFilename: isDebug ? '[name].js?[chunkhash]' : '[name].[chunkhash].js',
+    chunkFilename: '[name].bundle.js',
     sourcePrefix: '  ',
   },
 
@@ -40,32 +28,25 @@ const config = {
       components: path.resolve(__dirname, '../src/components/'),
       theme: path.resolve(__dirname, '../src/styles/theme.js'),
       utils: path.resolve(__dirname, '../src/utils/'),
+      assets: path.resolve(__dirname, '../public/assets/'),
     },
   },
-
-  // Developer tool to enhance debugging, source maps
-  // http://webpack.github.io/docs/configuration.html#devtool
-  devtool: isDebug ? 'source-map' : false,
 
   // What information should be printed to the console
   stats: {
     colors: true,
-    reasons: isDebug,
-    hash: isVerbose,
-    version: isVerbose,
     timings: true,
-    chunks: isVerbose,
-    chunkModules: isVerbose,
-    cached: isVerbose,
-    cachedAssets: isVerbose,
   },
 
   // The list of plugins for Webpack compiler
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
-        __DEV__: isDebug,
+        VERSION: JSON.stringify(process.env.VERSION || 'omnae'),
+        API_URL: JSON.stringify(process.env.API_URL || 'http://localhost:9090'),
+        AUTH0_CLIENT_ID: JSON.stringify(process.env.AUTH0_CLIENT_ID || 'dUeE42A2aB9grdcVjVP5DD47aEHxYZ7R'),
+        AUTH0_DOMAIN: JSON.stringify(process.env.AUTH0_DOMAIN || 'INSERT_DOMAIN_HERE.auth0.com'),
+        AUTH0_REDIRECT_URI: JSON.stringify(process.env.AUTH0_REDIRECT_URI || 'http://localhost:8080/callback'),
       },
     }),
     // Emit a JSON file with assets paths
@@ -74,10 +55,6 @@ const config = {
       path: path.resolve(__dirname, '../public/dist'),
       filename: 'assets.json',
       prettyPrint: true,
-    }),
-    new webpack.LoaderOptionsPlugin({
-      debug: isDebug,
-      minimize: !isDebug,
     }),
   ],
 
@@ -97,16 +74,7 @@ const config = {
         test: /\.css$/,
         use: [
           'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: isDebug,
-              importLoaders: true,
-              // CSS Modules https://github.com/css-modules/css-modules
-              modules: true,
-              localIdentName: isDebug ? '[name]_[local]_[hash:base64:3]' : '[hash:base64:4]',
-            },
-          },
+          'css-loader',
           {
             loader: 'postcss-loader',
             options: {
@@ -130,10 +98,13 @@ const config = {
         test: /\.(eot|ttf|wav|mp3)$/,
         use: 'file-loader',
       },
+      {
+        test: /\.(graphql|gql)$/,
+        exclude: /node_modules/,
+        loader: 'graphql-tag/loader',
+      },
     ],
   },
 }
-
-config.entry.unshift('whatwg-fetch')
 
 module.exports = config

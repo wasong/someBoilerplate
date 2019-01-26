@@ -1,35 +1,55 @@
 import React from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
-import { cx } from 'emotion'
+import {
+  BrowserRouter as Router, Route, Switch, Redirect,
+} from 'react-router-dom'
+import { connect } from 'react-redux'
+import Loadable from 'react-loadable'
+
 import { styler } from 'utils/styler'
 
+import Callback from './Auth/Callback'
+
+const Dashboard = Loadable({
+  loader: () => import(/* webpackChunkName: "split" */ './Dashboard'),
+  loading: () => <div>Loading Dashboard</div>,
+})
+
 const styles = styler({
-  home: {
-    fontSize: ['1rem', '1em', 20],
-    transition: 'font-size 100ms',
-    '&:hover': {
-      fontSize: ['1rem', '1em', 18],
-    },
-    '@media (max-width: 768px)': {
-      color: 'red',
-    },
-  },
-  underline: {
-    fontWeight: 'bold',
+  root: {
+    minHeight: '100vh',
+    display: 'flex',
   },
 })
 
-const Routes = () => (
-  <Router>
-    <div
-      className={cx(
-        styles.home,
-        { [styles.underline]: true },
-      )}
-    >
-      Emotion
-    </div>
-  </Router>
-)
+const Routes = ({ loggedIn, checked }) => {
+  if (!checked) return null
 
-export default Routes
+  return (
+    <Router>
+      <div className={styles.root}>
+        {loggedIn
+          ? (
+            <Switch>
+              <Route path="/callback" component={Callback} />
+              <Route path="/" component={Dashboard} />
+              <Redirect to="/dashboard" />
+            </Switch>
+          )
+          : (
+            <Switch>
+              <Route path="/callback" component={Callback} />
+              <Route path="/" component={() => <div>Wadu</div>} />
+              <Redirect to="/" />
+            </Switch>
+          )}
+      </div>
+    </Router>
+  )
+}
+
+const mapStateToProps = state => ({
+  checked: state.app.checked,
+  loggedIn: state.app.loggedIn,
+})
+
+export default connect(mapStateToProps)(Routes)

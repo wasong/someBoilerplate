@@ -1,51 +1,39 @@
-// Apollo
-import { ApolloClient } from 'apollo-client'
-import { ApolloLink } from 'apollo-link'
+import ApolloClient from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
-import { onError } from 'apollo-link-error'
+import { setContext } from 'apollo-link-context'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import { RetryLink } from 'apollo-link-retry'
 
-const httpLink = createHttpLink({ uri: 'https://api.graph.cool/simple/v1/cjbybhg8640ni01344uc8ut6e' })
+import { getIdToken } from './auth'
 
-const retryLink = new RetryLink({
-  delay: {
-    initial: 300,
-    max: Infinity,
-    jitter: true,
+const defaultOptions = {
+  watchQuery: {
+    fetchPolicy: 'cache-and-network',
+    errorPolicy: 'ignore',
   },
-  attempts: {
-    max: 5,
-    retryIf: (error, _operation) => !!error,
+  query: {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
   },
+  mutate: {
+    errorPolicy: 'all',
+  },
+}
+
+const httpLink = createHttpLink({ uri: `${process.env.API_URL}/graphql` })
+const authLink = setContext((_, { headers }) => {
+  const token = getIdToken()
+
+  return token
+    ? { headers: { ...headers, authorization: `Bearer ${getIdToken()}` } }
+    : { headers }
 })
 
-// authLink (use when required)
-// const authLink = new ApolloLink((operation, forward) => {
-//   operation.setContext({
-//     headers: {
-//       authorization: localStorage.getItem('token') || null,
-//     },
-//   })
-//   return forward(operation)
-// })
+const link = authLink.concat(httpLink)
 
-// errorLink
-const errorLink = onError(({ networkError }) => {
-  if (networkError.statusCode === 401) {
-    // do something
-  }
+export const client = new ApolloClient({
+  link,
+  cache: new InMemoryCache(),
+  defaultOptions,
 })
 
-const cache = new InMemoryCache().restore(window.__APOLLO_STATE__) // eslint-disable-line
-
-// Setup Apollo client
-export default new ApolloClient({
-  link: ApolloLink.from([
-    // authLink,
-    retryLink,
-    errorLink,
-    httpLink,
-  ]),
-  cache,
-})
+export default {}

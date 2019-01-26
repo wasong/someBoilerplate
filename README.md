@@ -1,17 +1,19 @@
-Boilerplate for Single Page React Web Apps
+# Wadu
 
-### Tips
-- *[OPTIONAL]* there is an opinionated wrapper function for using style objects with Emotion, inspired by Radium syntax
+Single Page Web Application using ReactJS
+
+### Requirements
+
+- [Node.js](https://nodejs.org/)
+- [Yarn](https://yarnpkg.com/lang/en/)
+
+### Development Setup
+
+Run **app** on port 8080:
+```bash
+$ yarn install
+$ yarn start
 ```
-const styles = styler({
-  [foo]: {
-    width: '100%',
-    fontSize: 16,
-  },
-  ...,
-})
 
-<div className={styles.foo}>
-```
-- currently Emotion v9: [Docs](https://5bb1495273f2cf57a2cf39cc--emotion.netlify.com/)
-
+Usually after code changes, the hot reloader will update the app for you.
+In some cases, you may require a refresh.

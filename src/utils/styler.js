@@ -10,4 +10,4 @@ export const styler = (styles) => {
   return wrappedStyles
 }
 
-export default styler
+export const treeShake = () => ({ hello: 'world' })

@@ -1,7 +1,7 @@
 {
-  "name": "someBoilerplate",
-  "short_name": "someBoiler",
-  "description": "Boilerplate",
+  "name": "Wadu",
+  "short_name": "Wadu",
+  "description": "Boilerplate for Web Apps",
   "lang": "en-US",
   "orientation": "portrait-primary",
   "start_url": ".",

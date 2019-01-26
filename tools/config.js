@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'SomeBoilerplate',
+  title: 'Wadu',
   url: '',
   trackingID: 'UA-XXXXX-Y',
   googleTagManager: {

@@ -13,9 +13,8 @@ module.exports = task('run', () => new Promise((resolve) => {
   rimraf.sync('public/dist/*', { nosort: true, dot: false })
   let count = 0
   const bs = Browsersync.create()
-  const webpackConfig = require('./webpack.config')
+  const webpackConfig = require('./webpack.dev')
   const compiler = webpack(webpackConfig)
-  // Node.js middleware that compiles application in watch mode with HMR support
   // http://webpack.github.io/docs/webpack-dev-middleware.html
   const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
     publicPath: webpackConfig.output.publicPath,
@@ -25,16 +24,13 @@ module.exports = task('run', () => new Promise((resolve) => {
   compiler.plugin('done', (stats) => {
     // Generate index.html page
     let bundle
-    let commons
-    // const bundle = stats.compilation.chunks.find(x => x.name === 'main').files[0]
     stats.compilation.chunks.forEach(({ name, files }) => {
       if (name === 'main') [bundle] = files
-      if (name === 'commons') [commons] = files
     })
     const template = fs.readFileSync('./public/index.ejs', 'utf8')
     const render = ejs.compile(template, { filename: './public/index.ejs' })
     const output = render({
-      debug: true, bundle: `/dist/${bundle}`, commons: `/dist/${commons}`, config,
+      debug: true, bundle: `/dist/${bundle}`, config,
     })
     fs.writeFileSync('./public/index.html', output, 'utf8')
 
@@ -49,7 +45,7 @@ module.exports = task('run', () => new Promise((resolve) => {
           baseDir: 'public',
           middleware: [
             webpackDevMiddleware,
-            // require('webpack-hot-middleware')(compiler),
+            require('webpack-hot-middleware')(compiler),
             require('connect-history-api-fallback')(),
           ],
         },
