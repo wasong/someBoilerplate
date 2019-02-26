@@ -1,3 +1,6 @@
+# DEPRECATED
+in favor of wasong/wadu
+
 Boilerplate for Single Page React Web Apps
 
 ### Tips
